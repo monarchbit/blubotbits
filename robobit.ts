@@ -218,14 +218,12 @@ namespace robobit
     let leftBias = 0;
     let rightBias = 0;
 
-    let lMotorD0 = DigitalPin.P0;
-    let lMotorD1 = DigitalPin.P8;
-    let lMotorA0 = AnalogPin.P0;
-    let lMotorA1 = AnalogPin.P8;
-    let rMotorD0 = DigitalPin.P1;
-    let rMotorD1 = DigitalPin.P12;
-    let rMotorA0 = AnalogPin.P1;
-    let rMotorA1 = AnalogPin.P12;
+    let lMotorD0 = DigitalPin.P13;
+    let lMotorD1 = DigitalPin.P12;
+    let lMotorA0 = AnalogPin.P1;
+    let rMotorD0 = DigitalPin.P15;
+    let rMotorD1 = DigitalPin.P16;
+    let rMotorA0 = AnalogPin.P2;
 
     let _model: RBModel;
     let larsson: number;
@@ -276,11 +274,21 @@ namespace robobit
     function setPWM(speed: number): void
     {
         if (speed < 200)
-            pins.analogSetPeriod(AnalogPin.P0, 60000);
+            {
+            pins.analogSetPeriod(AnalogPin.P1, 60000);
+            pins.analogSetPeriod(AnalogPin.P2, 60000);
+            }
         else if (speed < 300)
-            pins.analogSetPeriod(AnalogPin.P0, 40000);
+            {
+            pins.analogSetPeriod(AnalogPin.P1, 40000);
+            pins.analogSetPeriod(AnalogPin.P2, 60000);
+            }
         else
-            pins.analogSetPeriod(AnalogPin.P0, 30000);
+            {
+            pins.analogSetPeriod(AnalogPin.P1, 30000);
+            pins.analogSetPeriod(AnalogPin.P2, 60000);
+            }
+
     }
 
     /**
@@ -405,12 +413,14 @@ namespace robobit
             if (direction == RBDirection.Forward)
             {
                 pins.analogWritePin(lMotorA0, lSpeed);
-                pins.analogWritePin(lMotorA1, 0);
+                pins.digitalWritePin(lMotorD0,1)
+                pins.digitalWritePin(lMotorD1,0)
             }
             else
             {
-                pins.analogWritePin(lMotorA0, 0);
-                pins.analogWritePin(lMotorA1, lSpeed);
+                pins.analogWritePin(lMotorA0, lSpeed);
+                pins.digitalWritePin(lMotorD0,0)
+                pins.digitalWritePin(lMotorD1,1)
             }
         }
         if ((motor == RBMotor.Right) || (motor == RBMotor.Both))
@@ -418,12 +428,14 @@ namespace robobit
             if (direction == RBDirection.Forward)
             {
                 pins.analogWritePin(rMotorA0, rSpeed);
-                pins.analogWritePin(rMotorA1, 0);
+                pins.digitalWritePin(rMotorD0,1)
+                pins.digitalWritePin(rMotorD1,0)
             }
             else
             {
-                pins.analogWritePin(rMotorA0, 0);
-                pins.analogWritePin(rMotorA1, rSpeed);
+                pins.analogWritePin(rMotorA0, rSpeed);
+                pins.digitalWritePin(rMotorD0,0)
+                pins.digitalWritePin(rMotorD1,1)
             }
         }
     }
@@ -568,13 +580,16 @@ namespace robobit
         }
         if ((motor == RBMotor.Left) || (motor == RBMotor.Both))
         {
-            pins.analogWritePin(AnalogPin.P0, realSpeed);
-            pins.digitalWritePin(DigitalPin.P8, forward ? 0 : 1);
+            pins.analogWritePin(AnalogPin.P1, realSpeed);
+            pins.digitalWritePin(DigitalPin.P12, forward ? 0 : 1);
+            pins.digitalWritePin(DigitalPin.P13, forward ? 1 : 0);
         }
         if ((motor == RBMotor.Right) || (motor == RBMotor.Both))
         {
-            pins.analogWritePin(AnalogPin.P1, realSpeed);
-            pins.digitalWritePin(DigitalPin.P12, forward ? 0 : 1);
+            pins.analogWritePin(AnalogPin.P2, realSpeed);
+            pins.digitalWritePin(DigitalPin.P16, forward ? 0 : 1);
+            pins.digitalWritePin(DigitalPin.P15, forward ? 1 : 0);
+
         }
     }
 
@@ -585,7 +600,7 @@ namespace robobit
     {
         if (!ledBar)
         {
-            ledBar = fireled.newBand(DigitalPin.P13, 8);
+            ledBar = fireled.newBand(DigitalPin.P5, 8);
             ledBar.setBrightness(40);
         }
         return ledBar;
@@ -872,11 +887,11 @@ namespace robobit
     export function sonar(unit: RBPingUnit): number
     {
         // send pulse
-        let trig = DigitalPin.P13;
+        let trig = DigitalPin.P7;
 	if (_model == RBModel.Mk3)
-	    trig = DigitalPin.P15;
+	    trig = DigitalPin.P7;
 	if (_model == RBModel.Mk2A)
-	    trig = DigitalPin.P15;
+	    trig = DigitalPin.P7;
         let echo = trig;
         let maxCmDistance = 500;
         let d=10;
@@ -913,16 +928,16 @@ namespace robobit
         if (sensor == RBLineSensor.Left)
 	{
 	    if (_model == RBModel.Mk3)
-            	return pins.digitalReadPin(DigitalPin.P16);
+            	return pins.digitalReadPin(DigitalPin.P8);
 	    else
-            	return pins.digitalReadPin(DigitalPin.P11);
+            	return pins.digitalReadPin(DigitalPin.P9);
         }
         else
 	{
 	    if (_model == RBModel.Mk3)
-            	return pins.digitalReadPin(DigitalPin.P14);
+            	return pins.digitalReadPin(DigitalPin.P8);
 	    else
-            	return pins.digitalReadPin(DigitalPin.P5);
+            	return pins.digitalReadPin(DigitalPin.P9);
         }
     }
 
@@ -937,7 +952,7 @@ namespace robobit
     export function setTalon(degrees: number): void
     {
         degrees = clamp(degrees, 0, 80);
-        pins.servoWritePin(AnalogPin.P13, degrees);
+        pins.servoWritePin(AnalogPin.P8, degrees);
     }
 
 // Addon Boards
@@ -949,7 +964,7 @@ namespace robobit
     {
         if (!matrix5)
         {
-            matrix5 = fireled.newBand(DigitalPin.P15, 25);
+            matrix5 = fireled.newBand(DigitalPin.P8, 25);
             matrix5.setBrightness(40);
         }
         return matrix5;
@@ -1209,7 +1224,7 @@ namespace robobit
     {
         if (!bitface)
         {
-            bitface = fireled.newBand(DigitalPin.P15, 17);
+            bitface = fireled.newBand(DigitalPin.P8, 17);
             bitface.setBrightness(40);
         }
         return bitface;
