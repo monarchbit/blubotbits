@@ -1,14 +1,14 @@
 {
-    "name": "RoboBit",
+    "name": "BluBotBit",
     "version": "1.3.0",
-    "description": "Microsoft MakeCode package for 4tronix RoboBit Buggy",
+    "description": "Microsoft MakeCode package for BluBot RoboBit Buggy",
     "license": "MIT",
     "dependencies": {
         "core": "*",
     },
     "files": [
         "README.md",
-        "robobit.ts",
+        "blubot.ts",
         "_locales/no/robobit-strings.json"
     ],
     "testFiles": [
