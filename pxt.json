@@ -5,8 +5,6 @@
     "license": "MIT",
     "dependencies": {
         "core": "*",
-        "fireled": "github:4tronix/FireLedsBase",
-        "firescreen": "github:4tronix/FireScreen#0.0.5"
     },
     "files": [
         "README.md",
