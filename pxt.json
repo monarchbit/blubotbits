@@ -9,7 +9,6 @@
     "files": [
         "README.md",
         "blubot.ts",
-        "_locales/no/robobit-strings.json"
     ],
     "testFiles": [
         "tests.ts"
